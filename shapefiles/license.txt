@@ -1,0 +1,20 @@
+IND data were extracted from the GADM database (www.gadm.org), version 3.4, April 2018. They can be used for non-commercial purposes only.  It is not allowed to redistribute these data, or use them for commercial purposes, without prior consent. See the website (www.gadm.org) for more information.
+
+*****
+2011_Dist data downloaded from https://github.com/datameet/maps/tree/master/Districts/Census_2011 on 1 April 2021. This dataset is shared under Creative Commons Attribution 2.5 India license (https://creativecommons.org/licenses/by/2.5/in/).
+
+MIT License
+
+Copyright (c) 2020 DataMeet India community
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+*****
