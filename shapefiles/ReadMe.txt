@@ -1,0 +1,1 @@
+The 2011_Dist data is used in our calculations as it corresponds to the 2011 census's state and district names and boundries. The IND shapefiles are here for refference when trouble shooting mapping errors but are not used in final outputs.

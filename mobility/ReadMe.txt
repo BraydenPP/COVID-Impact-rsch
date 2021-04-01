@@ -1,0 +1,1 @@
+This folder houses data and maps related to the mobility of people durring the lockdown/containment zones.
