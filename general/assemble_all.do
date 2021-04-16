@@ -142,6 +142,7 @@ label values month months
 label define colors 1"Green" 2"Orange" 3"Red"
 label values zone_color colors
 
+cd \\rschfs1x\userrs\a-e\bp257_RS\Desktop\data\general/visuals
 sort pc11_state_id month
 by pc11_state_id month: egen mobilityxstate = mean(av_mobility)
 xtline mobilityxstate, t(month) i(pc11_state_id ) overlay yline(0, lp(dot) lc(black)) legend(off) ytitle("% Change in Mobility") xtitle("Month") title("State Changes in Mobility 2020") scheme(s1color)
@@ -157,6 +158,6 @@ graph export mobility_xmonth.png, replace
 graph box workplace_av, over(month) nooutsides ytitle("% Change in Trips to Work") title("Changes in Workplace Visitation by Month") scheme(s1color)
 graph export work_xmonth.png, replace
 tw (sc av_mobility contained_cases) (lfit av_mobility contained_cases), ytitle("% Change in Mobility") xtitle("Case Count * Minimal Containment Period (Case*Days)") title("Change in Mobility as Containment Increases") scheme(s1color)
-graph export mobility_xcasedays, replace
+graph export mobility_xcasedays.png, replace
 *****/
 //make a table of regression coefs?
