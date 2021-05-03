@@ -3,12 +3,12 @@
 
 /* Generating a seedfile for appending */
 clear
-cd C:\Users\bp257_RS\Desktop\data\markets
-save agmark_new.dta, replace emptyok
+cd \\rschfs1x\userrs\a-e\bp257_RS\Desktop\data\markets
+save agmark.dta, replace emptyok
 
 /* Loop over all the csv files. Change the loop in a way to loop over all the files */
 forval i = 1/18 {
-	import delimited C:\Users\bp257_RS\Desktop\covidpub\agmark\raw/Agmark_`i'.csv, encoding(ISO-8859-1) clear
+	import delimited \\rschfs1x\userrs\a-e\bp257_RS\Desktop\covidpub\agmark\raw/Agmark_`i'.csv, encoding(ISO-8859-1) clear
 	
 	*Rename all variables
 	drop v1
@@ -113,10 +113,11 @@ forval i = 1/18 {
 	format date %td
 	drop date1
 	
- append using agmark_new.dta
- save agmark_new.dta, replace
+ append using agmark.dta
+ save agmark.dta, replace
 }
-
+*/
+use agmark, clear
 *Cleaning up the data
 drop if date == .
 drop if mandi == state
@@ -125,9 +126,14 @@ replace mandi = lower(mandi)
 
 *Merging in the LSG district codes. We have mapped all Mandis in Agmark database.
 *Download and add the market lsg coded file to the path before proceeding
-merge m:1 state mandi using C:\Users\bp257_RS\Desktop\covidpub/agmark/raw/marketcoded, keepusing(district lgd_state_id lgd_district_id)
+
+merge m:1 state mandi using \\rschfs1x\userrs\a-e\bp257_RS\Desktop\data\markets/marketcoded, keepusing(pc11_district_id)
 keep if _merge == 3
 drop _merge
+destring pc11_district_id, replace
+merge m:1 pc11_district_id using \\rschfs1x\userrs\a-e\bp257_RS\Desktop\data\mobility/import_names, keepusing(pc11_state_id _ID)
+keep if _merge == 3
+drop _merge state
 
 label var qty "Arrival Quantity"
 label var unit "Unit of Measurement (Qty)"
@@ -141,45 +147,37 @@ label var item "Name of the item"
 label var group "Broad item category"
 label var date "Date of reporting"
 label var mandi "Name of Mandi"
-label var state "State as recorded in Agmark"
-label var district "District as recorded in Agmark"
 
 /* For Creating aggregators/ Prototype for only 2020 uncomment the following block
 keep if date>td(31dec2019)
 */
 
+drop if priceunit!="Rs/Quintal"
 *Generate aggregative quantity for items (expressed in Tonnes alone)
 destring qty, force replace
-bysort date lgd_district_id: egen qty_dist=sum(qty) if unit=="Tonnes"
-bysort date lgd_state_id: egen qty_state=sum(qty) if unit=="Tonnes"
-bysort date group: egen qty_group=sum(qty) if unit=="Tonnes"
-
+bysort date pc11_district_id group: egen daily_qty =sum(qty) if unit=="Rs/Quintal"
 * Generate aggregate Price (All-India, Item Level)
-bysort date item: egen price_avg=mean(modeprice)
-label var qty_dist "Aggregate Quantity in a District per day (Only those expressed in Tonnes)"
-label var qty_state "Aggregate Quantity in a State per day (Only those expressed in Tonnes)"
-label var qty_group "Aggregate Quantity for a product group per day (Only those expressed in Tonnes)"
-label var price_avg "Average All India Price for the Item in a day "
+bysort date pc11_district_id group: egen daily_price =mean(modeprice)
+
+label var daily_qty "Aggregate Group Quantity in a District per day (Those expressed in Tonnes)"
+label var daily_price "Average Group Price in a District per day (Those expressed in Tonnes)"
 
 /* reduce filesize as much as possible */
 replace minprice = "" if minprice == "NR"
 destring minprice, force replace
 replace maxprice = "" if maxprice == "NR"
 destring maxprice, force replace 
-foreach v in state mandi district item unit source spec priceunit group {
+foreach v in mandi item unit source spec priceunit group {
   ren `v' old`v'
   encode old`v', gen(`v')
   drop old`v'
 }
 
 /* drop duplicates present in the raw data which do not provide additional information */
-duplicates drop date state mandi district item, force
+duplicates drop date pc11_state_id pc11_district_id mandi item, force
+
 
 /* write out master dataset */
-order date state mandi district item unit priceunit source spec group, first
 compress
-save C:\Users\bp257_RS\Desktop\data\markets/agmark_clean.dta, replace
-
-* If you are generating only 2020 data comment above line and uncomment following line,
-*save $covidpub/agmark/agmark_2020lsgcoded.dta, replace 
+save \\rschfs1x\userrs\a-e\bp257_RS\Desktop\data\markets/agmark, replace
 
