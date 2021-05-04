@@ -155,7 +155,7 @@ keep if date>td(31dec2019)
 drop if priceunit!="Rs/Quintal"
 *Generate aggregative quantity for items (expressed in Tonnes alone)
 destring qty, force replace
-bysort date pc11_district_id group: egen daily_qty =sum(qty) if unit=="Rs/Quintal"
+bysort date pc11_district_id group: egen daily_qty =sum(qty) if unit=="Tonnes"
 * Generate aggregate Price (All-India, Item Level)
 bysort date pc11_district_id group: egen daily_price =mean(modeprice)
 

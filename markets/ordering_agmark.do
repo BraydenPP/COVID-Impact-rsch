@@ -64,10 +64,18 @@ gen exp_qty= (1+(qty_19 - qty_18)/qty_18)*qty_19
 gen exp_price= (1+(price_19 - price_18)/price_18)*price_19
 gen deviation_qty = diff_qty - exp_qty
 gen deviation_price = diff_price - exp_price
-drop exp_qty exp_price qty_18 qty_19 qty_20 price_18 price_19 price_20
+drop exp_qty exp_price qty_18 qty_19 price_18 price_19
+drop if qty_20 ==.& price_20 ==.
 
 save agmark_ready, replace
 
 //merge with monthly_all
-*use agmark_monthly, clear
+use \\rschfs1x\userrs\a-e\bp257_RS\Desktop\data\general/monthly_all, clear
+
+merge 1:m pc11_district_id month using agmark_ready
+drop if _merge !=3
+drop _merge
+
+
+
 
