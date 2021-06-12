@@ -87,3 +87,4 @@ for Y in range(2019, 2020):
                 if D == 15 or D == 31:
                     append()
             print(f'months completed: {M}')
+print('All Done!   :)')
